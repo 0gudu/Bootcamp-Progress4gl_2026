@@ -1,0 +1,265 @@
+ADD TABLE "alugueis"
+  AREA "Schema Area"
+  DUMP-NAME "alugueis"
+
+ADD FIELD "codAluguel" OF "alugueis" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Aluguel"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Aluguel"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "nomCliente" OF "alugueis" AS character 
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Nome"
+  POSITION 3
+  MAX-WIDTH 60
+  COLUMN-LABEL "Nome"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "datAluguel" OF "alugueis" AS date 
+  FORMAT "99/99/9999"
+  INITIAL "TODAY"
+  LABEL "Data"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Data"
+  ORDER 30
+  MANDATORY
+
+ADD FIELD "valAluguel" OF "alugueis" AS decimal 
+  FORMAT ">>>>>>>9.99"
+  INITIAL "0"
+  LABEL "Total"
+  POSITION 5
+  MAX-WIDTH 17
+  COLUMN-LABEL "Toatal"
+  DECIMALS 2
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "observacao" OF "alugueis" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Observação"
+  POSITION 6
+  MAX-WIDTH 120
+  COLUMN-LABEL "Observação"
+  ORDER 50
+
+ADD INDEX "codAluguel" ON "alugueis" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codAluguel" ASCENDING 
+
+ADD TABLE "aluguel_filmes"
+  AREA "Schema Area"
+  DUMP-NAME "aluguel_filmes"
+
+ADD FIELD "codAluguel" OF "aluguel_filmes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Aluguel"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Aluguel"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "codItem" OF "aluguel_filmes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Item"
+  POSITION 3
+  MAX-WIDTH 4
+  COLUMN-LABEL "Item"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "codFilme" OF "aluguel_filmes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 30
+  MANDATORY
+
+ADD FIELD "numQuantidade" OF "aluguel_filmes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Quantidade"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Quantidade"
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "valTotal" OF "aluguel_filmes" AS decimal 
+  FORMAT ">>>>>>>9.99"
+  INITIAL "0"
+  LABEL "Valor Total"
+  POSITION 6
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor Total"
+  DECIMALS 2
+  ORDER 50
+  MANDATORY
+
+ADD INDEX "codigo" ON "aluguel_filmes" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codAluguel" ASCENDING 
+  INDEX-FIELD "codItem" ASCENDING 
+
+ADD TABLE "cidades"
+  AREA "Schema Area"
+  DUMP-NAME "cidades"
+
+ADD FIELD "codCidade" OF "cidades" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "nomCidade" OF "cidades" AS character 
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Cidade"
+  POSITION 3
+  MAX-WIDTH 60
+  COLUMN-LABEL "Cidade"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "codUF" OF "cidades" AS character 
+  FORMAT "x(2)"
+  INITIAL ""
+  LABEL "UF"
+  POSITION 4
+  MAX-WIDTH 4
+  COLUMN-LABEL "UF"
+  ORDER 30
+  MANDATORY
+
+ADD INDEX "codCidade" ON "cidades" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codCidade" ASCENDING 
+
+ADD TABLE "clientes"
+  AREA "Schema Area"
+  DUMP-NAME "clientes"
+
+ADD FIELD "codCliente" OF "clientes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "nomCliente" OF "clientes" AS character 
+  FORMAT "x(30)"
+  INITIAL ""
+  LABEL "Nome"
+  POSITION 3
+  MAX-WIDTH 60
+  COLUMN-LABEL "Nome"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "codEndereco" OF "clientes" AS character 
+  FORMAT "x(50)"
+  INITIAL ""
+  LABEL "Endereço"
+  POSITION 4
+  MAX-WIDTH 100
+  COLUMN-LABEL "Endereço"
+  ORDER 30
+
+ADD FIELD "codCidade" OF "clientes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 5
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 40
+  MANDATORY
+
+ADD FIELD "observacao" OF "clientes" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Observação"
+  POSITION 6
+  MAX-WIDTH 120
+  COLUMN-LABEL "Observação"
+  ORDER 50
+
+ADD INDEX "codCliente" ON "clientes" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codCliente" ASCENDING 
+
+ADD TABLE "filmes"
+  AREA "Schema Area"
+  DUMP-NAME "filmes"
+
+ADD FIELD "codFilme" OF "filmes" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 2
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 10
+  MANDATORY
+
+ADD FIELD "nomFilme" OF "filmes" AS character 
+  FORMAT "x(60)"
+  INITIAL ""
+  LABEL "Filme"
+  POSITION 3
+  MAX-WIDTH 120
+  COLUMN-LABEL "Filme"
+  ORDER 20
+  MANDATORY
+
+ADD FIELD "valFilme" OF "filmes" AS decimal 
+  FORMAT ">>>>>>>9.99"
+  INITIAL "0"
+  LABEL "Valor"
+  POSITION 4
+  MAX-WIDTH 17
+  COLUMN-LABEL "Valor"
+  DECIMALS 2
+  ORDER 30
+
+ADD INDEX "codFilme" ON "filmes" 
+  AREA "Schema Area"
+  UNIQUE
+  PRIMARY
+  INDEX-FIELD "codFilme" ASCENDING 
+
+.
+PSC
+cpstream=ISO8859-1
+.
+0000004877
