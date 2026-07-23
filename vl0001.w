@@ -24,5 +24,10 @@ DO:
     RUN fonts\vl0010.w.
 END.
 
+ON 'choose':U OF bt-filmes IN FRAME f-menu
+DO:
+    RUN fonts\vl0020.w.
+END.
+
 WAIT-FOR ENDKEY OF bt-sair IN FRAME f-menu.
     
