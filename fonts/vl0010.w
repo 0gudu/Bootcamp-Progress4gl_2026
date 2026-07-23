@@ -1,20 +1,22 @@
-DEFINE BUFFER bf-cidades FOR cidades.
+USING PROGRESS.json.ObjectModel.JsonObject.
+USING PROGRESS.json.ObjectModel.JsonArray.
 
 DEFINE BUTTON bt-first     LABEL "<<".
 DEFINE BUTTON bt-prev      LABEL "<".
 DEFINE BUTTON bt-prox      LABEL ">".
 DEFINE BUTTON bt-last      LABEL ">>".
-DEFINE BUTTON bt-edit      LABEL "edit".
-DEFINE BUTTON bt-add       LABEL "+".
-DEFINE BUTTON bt-cancel    LABEL "cancel".
-DEFINE BUTTON bt-delete    LABEL "deletar".
-DEFINE BUTTON bt-relat     LABEL "Relat".
+DEFINE BUTTON bt-edit      LABEL "Edit".
+DEFINE BUTTON bt-add       LABEL "Adicionar".
+DEFINE BUTTON bt-cancel    LABEL "Cancel".
+DEFINE BUTTON bt-delete    LABEL "Deletar".
+DEFINE BUTTON bt-relat     LABEL "Exportar".
 DEFINE BUTTON bt-sair      LABEL "Sair" AUTO-ENDKEY.
 DEFINE VARIABLE lg-edit    AS LOGICAL   NO-UNDO INITIAL NO.
 DEFINE VARIABLE lg-add     AS LOGICAL   NO-UNDO INITIAL NO.
-DEFINE VARIABLE l-choise AS LOGICAL     NO-UNDO.
+DEFINE VARIABLE l-choise   AS LOGICAL   NO-UNDO.
+DEFINE VARIABLE c-erros    AS CHARACTER NO-UNDO.
 
-DEFINE VARIABLE c-erros AS CHARACTER   NO-UNDO.
+DEFINE BUFFER bf-cidades FOR cidades.
 
 DEFINE QUERY q-query FOR cidades SCROLLING.
 
@@ -27,7 +29,7 @@ DEFINE FRAME f-cidades
   bt-cancel AT ROW 1 COL 27
   bt-delete AT ROW 1 COL 36
   bt-add    AT ROW 1 COL 45
-  bt-relat  AT ROW 1 COL 93
+  bt-relat  AT ROW 1 COL 90
   bt-sair   AT ROW 1 COL 100
   SKIP(0.5)
   WITH TITLE "Cidades" CENTERED SIDE-LAB WIDTH 110 THREE-D VIEW-AS DIALOG-BOX.
@@ -129,9 +131,7 @@ END.
 
 
 ON CHOOSE OF bt-relat  DO:
-    RUN pi-checavazios(OUTPUT c-erros).
-    MESSAGE "Os campos abaixo são mandatórios e estão vazios!" SKIP c-erros
-        VIEW-AS ALERT-BOX ERROR BUTTONS OK.
+    RUN pi-exporta.
 END.
 
 //PROCEDURES INTERNAS
@@ -182,9 +182,7 @@ PROCEDURE pi-mostra:
         GET FIRST q-query.
         IF AVAIL cidades THEN
              DISPLAY 
-                cidades.codCidade
-                cidades.codUF
-                cidades.nomCidade
+                cidades
              WITH CENTERED 1 COL  FRAME f-cidades.
         ELSE
              DISPLAY 
@@ -238,6 +236,36 @@ PROCEDURE pi-atualizadados:
 
 END PROCEDURE.
 
+PROCEDURE pi-exporta:
+    DEFINE VARIABLE oObj  AS JsonObject  NO-UNDO.
+    DEFINE VARIABLE aList AS JsonArray   NO-UNDO.
+    DEFINE VARIABLE c-arq AS CHARACTER   NO-UNDO.
+    
+    ASSIGN c-arq = SESSION:TEMP-DIRECTORY + "filmes."
+           aList = NEW JsonArray().
+           
+    OUTPUT TO VALUE(c-arq + "csv").
+        PUT UNFORMATTED "Codigo;"
+                        "Cidade;"
+                        "UF;"
+                        SKIP.
+    FOR EACH bf-cidades NO-LOCK:
+        PUT UNFORMATTED string(cidades.codcidade)  ";"
+                        cidades.codUF              ";"
+                        cidades.nomCidade          ";"
+                        SKIP. 
+        oObj = NEW JsonObject().
+        oObj:ADD('Codigo', cidades.codcidade).
+        oObj:ADD('Cidade', cidades.codUF).
+        oObj:ADD('UF', cidades.nomCidade).
+        aList:ADD(oObj).
+    END.
+    OUTPUT CLOSE.
+    
+    aList:WriteFile((c-arq + "json"), YES).
+    OS-COMMAND NO-WAIT VALUE(c-arq + "csv").
+    OS-COMMAND NO-WAIT VALUE(c-arq + "json").
+END PROCEDURE.
 
 //MANIPULAÇÃO DE CAMPOS EM MASSA
 PROCEDURE pi-campos-sensitive:
@@ -263,7 +291,7 @@ PROCEDURE pi-campos-sensitive:
         
     END.
     RETURN "NOK":U.
-END.
+END PROCEDURE.
 
 PROCEDURE pi-esvaziavalores:
     DEFINE VARIABLE hand-frame AS WIDGET-HANDLE NO-UNDO.
@@ -286,7 +314,7 @@ PROCEDURE pi-esvaziavalores:
         
     END.
     RETURN "NOK":U.
-END.
+END PROCEDURE.
 
 PROCEDURE pi-checavazios:
     DEFINE VARIABLE hand-frame AS WIDGET-HANDLE NO-UNDO.
@@ -323,7 +351,7 @@ PROCEDURE pi-checavazios:
         
     END.
     RETURN.
-END.
+END PROCEDURE.
 
 WAIT-FOR ENDKEY OF bt-sair IN FRAME f-cidades.
 
