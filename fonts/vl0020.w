@@ -1,6 +1,8 @@
 USING PROGRESS.json.ObjectModel.JsonObject.
 USING PROGRESS.json.ObjectModel.JsonArray.
 
+DEFINE BUFFER bf-filmes FOR filmes.
+
 DEFINE BUTTON bt-first     LABEL "<<".
 DEFINE BUTTON bt-prev      LABEL "<".
 DEFINE BUTTON bt-prox      LABEL ">".
@@ -13,14 +15,13 @@ DEFINE BUTTON bt-relat     LABEL "Exportar".
 DEFINE BUTTON bt-sair      LABEL "Sair" AUTO-ENDKEY.
 DEFINE VARIABLE lg-edit    AS LOGICAL   NO-UNDO INITIAL NO.
 DEFINE VARIABLE lg-add     AS LOGICAL   NO-UNDO INITIAL NO.
-DEFINE VARIABLE l-choise   AS LOGICAL   NO-UNDO.
-DEFINE VARIABLE c-erros    AS CHARACTER NO-UNDO.
+DEFINE VARIABLE l-choise AS LOGICAL     NO-UNDO.
 
-DEFINE BUFFER bf-cidades FOR cidades.
+DEFINE VARIABLE c-erros AS CHARACTER   NO-UNDO.
 
-DEFINE QUERY q-query FOR cidades SCROLLING.
+DEFINE QUERY q-query FOR filmes SCROLLING.
 
-DEFINE FRAME f-cidades
+DEFINE FRAME f-filmes
   bt-first  AT ROW 1 COL 5
   bt-prev   AT ROW 1 COL 9
   bt-prox   AT ROW 1 COL 12
@@ -32,9 +33,9 @@ DEFINE FRAME f-cidades
   bt-relat  AT ROW 1 COL 90
   bt-sair   AT ROW 1 COL 100
   SKIP(0.5)
-  WITH TITLE "Cidades" CENTERED SIDE-LAB WIDTH 110 THREE-D VIEW-AS DIALOG-BOX.
+  WITH TITLE "filmes" CENTERED SIDE-LAB WIDTH 110 THREE-D VIEW-AS DIALOG-BOX.
 
-OPEN QUERY q-query FOR EACH cidades NO-LOCK. 
+OPEN QUERY q-query FOR EACH filmes NO-LOCK. 
 
 GET FIRST q-query.
                 
@@ -44,7 +45,7 @@ RUN pi-mostra.
 DEFINE VARIABLE hand-frame AS WIDGET-HANDLE NO-UNDO.
 DEFINE VARIABLE h-handle AS HANDLE NO-UNDO.
 
-ASSIGN hand-frame = FRAME f-cidades:HANDLE.
+ASSIGN hand-frame = FRAME f-filmes:HANDLE.
 
 ON CHOOSE OF bt-first  DO:
     RUN pi-navega(INPUT "first"). 
@@ -78,11 +79,11 @@ ON CHOOSE OF bt-edit  DO:
                lg-add  = NO.
     END.
     ELSE DO:
-        IF AVAIL cidades THEN
+        IF AVAIL filmes THEN
         DO:
             ASSIGN bt-edit:LABEL        = "save".
             RUN pi-habilita-campos.
-            DISABLE bt-first bt-prox bt-prev bt-last bt-add bt-delete WITH FRAME f-cidades.
+            DISABLE bt-first bt-prox bt-prev bt-last bt-add bt-delete WITH FRAME f-filmes.
             ASSIGN lg-edit = YES.     
         END.
     END.
@@ -90,15 +91,15 @@ END.
 
 ON 'choose':U OF bt-delete
 DO:
-    IF AVAIL cidades THEN
+    IF AVAIL filmes THEN
     DO:
         MESSAGE "Deseja deletar o registro?"
             VIEW-AS ALERT-BOX INFORMATION BUTTONS YES-NO UPDATE l-choise.
         IF l-choise THEN
         DO:
-            FIND FIRST bf-cidades EXCLUSIVE-LOCK
-                 WHERE bf-cidades.codCidade = cidade.codCidade.
-            DELETE bf-cidades.
+            FIND FIRST bf-filmes EXCLUSIVE-LOCK
+                 WHERE bf-filmes.codFilme = filmes.codFilme.
+            DELETE bf-filmes.
             RUN pi-navega(INPUT "next").
         END.    
     END.
@@ -118,13 +119,13 @@ ON CHOOSE OF bt-add  DO:
            lg-add               = YES.
            
     RUN pi-habilita-campos.
-    DISABLE bt-first bt-prox bt-prev bt-last bt-add bt-delete WITH FRAME f-cidades.        
+    DISABLE bt-first bt-prox bt-prev bt-last bt-add bt-delete WITH FRAME f-filmes.        
     
-    FIND LAST bf-cidades NO-LOCK NO-ERROR.
-    IF NOT AVAIL bf-cidades THEN
-            DISPLAY 1 @ cidades.codCidade WITH FRAME f-cidades.       
+    FIND LAST bf-filmes NO-LOCK NO-ERROR.
+    IF NOT AVAIL bf-filmes THEN
+            DISPLAY 1 @ filmes.codFilme WITH FRAME f-filmes.       
     ELSE
-        DISPLAY (bf-cidades.codCidade + 1) @ cidades.codCidade WITH FRAME f-cidades.
+        DISPLAY (bf-filmes.codFilme + 1) @ filmes.codFilme WITH FRAME f-filmes.
 
     RUN pi-esvaziavalores.
 END.
@@ -147,18 +148,18 @@ PROCEDURE pi-navega:
         WHEN "prev" THEN
         DO:
             GET PREV q-query.
-            IF NOT AVAIL cidades THEN
+            IF NOT AVAIL filmes THEN
             DO:
-                APPLY 'choose':U TO bt-last IN FRAME f-cidades.
+                APPLY 'choose':U TO bt-last IN FRAME f-filmes.
             END.       
         END.
         
         WHEN "next" THEN
         DO:
             GET NEXT q-query.
-            IF NOT AVAIL cidades THEN
+            IF NOT AVAIL filmes THEN
             DO:
-                APPLY 'choose':U TO bt-first IN FRAME f-cidades. 
+                APPLY 'choose':U TO bt-first IN FRAME f-filmes. 
             END.
         END.
         
@@ -173,40 +174,40 @@ PROCEDURE pi-navega:
 END PROCEDURE.
 
 PROCEDURE pi-mostra:
-    IF AVAIL cidades THEN
+    IF AVAIL filmes THEN
     DO:
-        DISPLAY cidades WITH CENTERED 1 COL  FRAME f-cidades.    
+        DISPLAY filmes WITH CENTERED 1 COL  FRAME f-filmes.    
     END.
     ELSE DO:
-        OPEN QUERY q-query FOR EACH cidades NO-LOCK.
+        OPEN QUERY q-query FOR EACH filmes NO-LOCK.
         GET FIRST q-query.
-        IF AVAIL cidades THEN
+        IF AVAIL filmes THEN
              DISPLAY 
-                cidades
-             WITH CENTERED 1 COL  FRAME f-cidades.
+                filmes
+             WITH CENTERED 1 COL  FRAME f-filmes.
         ELSE
              DISPLAY 
-                "" @ cidades.codCidade
-                "" @ cidades.codUF
-                "" @ cidades.nomCidade
-             WITH CENTERED 1 COL  FRAME f-cidades.
+                "" @ filmes.codFilme
+                "" @ filmes.nomFilme
+                "" @ filmes.valFilme
+             WITH CENTERED 1 COL  FRAME f-filmes.
         
     END.
 END PROCEDURE.
 
 PROCEDURE pi-habilita-campos:
-    ENABLE bt-cancel WITH FRAME f-cidades.
+    ENABLE bt-cancel WITH FRAME f-filmes.
     RUN pi-campos-sensitive(INPUT YES).
 END PROCEDURE.
 
 PROCEDURE pi-esconde-campos:
-    ENABLE  bt-first bt-prev bt-prox bt-last bt-add bt-delete WITH FRAME f-cidades.
-    DISABLE bt-cancel WITH FRAME f-cidades.
+    ENABLE  bt-first bt-prev bt-prox bt-last bt-add bt-delete WITH FRAME f-filmes.
+    DISABLE bt-cancel WITH FRAME f-filmes.
     RUN pi-campos-sensitive(INPUT NO).
 END PROCEDURE.
             
 PROCEDURE pi-habilita:
-    ENABLE bt-first bt-prev bt-prox bt-last bt-edit bt-add bt-delete bt-relat bt-sair WITH FRAME f-cidades.
+    ENABLE bt-first bt-prev bt-prox bt-last bt-edit bt-add bt-delete bt-relat bt-sair WITH FRAME f-filmes.
 END.
 
 PROCEDURE pi-atualizadados:
@@ -222,17 +223,17 @@ PROCEDURE pi-atualizadados:
     
     IF lg-add THEN
     DO:
-        CREATE bf-cidades.
-        ASSIGN bf-cidades.codCidade = int(cidades.codCidade:SCREEN-VALUE IN FRAME f-cidades). 
+        CREATE bf-filmes.
+        ASSIGN bf-filmes.codFilme = int(filmes.codFilme:SCREEN-VALUE IN FRAME f-filmes). 
     END.
     ELSE 
-        FIND FIRST bf-cidades EXCLUSIVE-LOCK
-             WHERE bf-cidades.codCidade = cidades.codCidade.
+        FIND FIRST bf-filmes EXCLUSIVE-LOCK
+             WHERE bf-filmes.codFilme = filmes.codFilme.
     
              
-    ASSIGN  bf-cidades.codCidade     =  integer(cidades.codCidade:SCREEN-VALUE IN FRAME f-cidades)
-            bf-cidades.codUF         =  cidades.codUF:screen-value in frame f-cidades
-            bf-cidades.nomCidade     =  cidades.nomCidade:screen-value in frame f-cidades.  
+    ASSIGN  bf-filmes.codFilme     =  integer(filmes.codFilme:SCREEN-VALUE IN FRAME f-filmes)
+            bf-filmes.nomFilme     =  filmes.nomFilme:screen-value in frame f-filmes
+            bf-filmes.valFilme     =  decimal(filmes.valFilme:screen-value in frame f-filmes).  
 
 END PROCEDURE.
 
@@ -241,23 +242,23 @@ PROCEDURE pi-exporta:
     DEFINE VARIABLE aList AS JsonArray   NO-UNDO.
     DEFINE VARIABLE c-arq AS CHARACTER   NO-UNDO.
     
-    ASSIGN c-arq = SESSION:TEMP-DIRECTORY + "cidades."
+    ASSIGN c-arq = SESSION:TEMP-DIRECTORY + "filmes."
            aList = NEW JsonArray().
            
     OUTPUT TO VALUE(c-arq + "csv").
         PUT UNFORMATTED "Codigo;"
-                        "Cidade;"
-                        "UF;"
+                        "Nome;"
+                        "Valor;"
                         SKIP.
-    FOR EACH bf-cidades NO-LOCK:
-        PUT UNFORMATTED string(cidades.codcidade)  ";"
-                        cidades.codUF              ";"
-                        cidades.nomCidade          ";"
+    FOR EACH bf-filmes NO-LOCK:
+        PUT UNFORMATTED string(filmes.codFilme)  ";"
+                        filmes.nomfilme              ";"
+                        string(filmes.valfilme)          ";"
                         SKIP. 
         oObj = NEW JsonObject().
-        oObj:ADD('Codigo', cidades.codcidade).
-        oObj:ADD('Cidade', cidades.codUF).
-        oObj:ADD('UF', cidades.nomCidade).
+        oObj:ADD('Codigo', filmes.codFilme).
+        oObj:ADD('Nome', filmes.nomfilme).
+        oObj:ADD('Valor', filmes.valfilme).
         aList:ADD(oObj).
     END.
     OUTPUT CLOSE.
@@ -274,11 +275,11 @@ PROCEDURE pi-campos-sensitive:
     DEFINE VARIABLE hand-frame AS WIDGET-HANDLE NO-UNDO.
     DEFINE VARIABLE h-objeto   AS WIDGET-HANDLE NO-UNDO.
 
-    ASSIGN hand-frame = FRAME f-cidades:HANDLE.
+    ASSIGN hand-frame = FRAME f-filmes:HANDLE.
     ASSIGN h-objeto   = hand-frame:FIRST-CHILD.
 
     DO WHILE VALID-HANDLE (h-objeto):
-        IF h-objeto:TYPE = "FILL-IN" AND h-objeto:NAME <> "codCidade" THEN DO:
+        IF h-objeto:TYPE = "FILL-IN" AND h-objeto:NAME <> "codFilme" THEN DO:
             ASSIGN h-objeto:SENSITIVE = lg-enable.
         END.
 
@@ -297,11 +298,11 @@ PROCEDURE pi-esvaziavalores:
     DEFINE VARIABLE hand-frame AS WIDGET-HANDLE NO-UNDO.
     DEFINE VARIABLE h-objeto   AS WIDGET-HANDLE NO-UNDO.
 
-    ASSIGN hand-frame = FRAME f-cidades:HANDLE.
+    ASSIGN hand-frame = FRAME f-filmes:HANDLE.
     ASSIGN h-objeto   = hand-frame:FIRST-CHILD.
 
     DO WHILE VALID-HANDLE (h-objeto):
-        IF h-objeto:TYPE = "FILL-IN" AND h-objeto:NAME <> "codCidade" THEN DO:
+        IF h-objeto:TYPE = "FILL-IN" AND h-objeto:NAME <> "codFilme" THEN DO:
             ASSIGN h-objeto:SCREEN-VALUE = "".
         END.
 
@@ -321,14 +322,14 @@ PROCEDURE pi-checavazios:
     DEFINE VARIABLE h-objeto   AS WIDGET-HANDLE NO-UNDO.
     DEFINE OUTPUT PARAMETER c-erros    AS CHARACTER   INIT "".
 
-    ASSIGN hand-frame = FRAME f-cidades:HANDLE.
+    ASSIGN hand-frame = FRAME f-filmes:HANDLE.
     ASSIGN h-objeto   = hand-frame:FIRST-CHILD.
 
     DO WHILE VALID-HANDLE (h-objeto):
        IF h-objeto:TYPE = "FILL-IN" THEN DO:
                 
             FIND FIRST _file NO-LOCK
-                 WHERE _file._file-name = "cidades".
+                 WHERE _file._file-name = "filmes".
             FIND FIRST _field OF _file NO-LOCK
                  WHERE _field._field-name = h-objeto:NAME.
             
@@ -353,6 +354,6 @@ PROCEDURE pi-checavazios:
     RETURN.
 END PROCEDURE.
 
-WAIT-FOR ENDKEY OF bt-sair IN FRAME f-cidades.
+WAIT-FOR ENDKEY OF bt-sair IN FRAME f-filmes.
 
 
