@@ -12,16 +12,6 @@ ADD FIELD "codAluguel" OF "alugueis" AS integer
   ORDER 10
   MANDATORY
 
-ADD FIELD "nomCliente" OF "alugueis" AS character 
-  FORMAT "x(30)"
-  INITIAL ""
-  LABEL "Nome"
-  POSITION 3
-  MAX-WIDTH 60
-  COLUMN-LABEL "Nome"
-  ORDER 20
-  MANDATORY
-
 ADD FIELD "datAluguel" OF "alugueis" AS date 
   FORMAT "99/99/9999"
   INITIAL "TODAY"
@@ -51,6 +41,16 @@ ADD FIELD "observacao" OF "alugueis" AS character
   MAX-WIDTH 120
   COLUMN-LABEL "Observação"
   ORDER 50
+
+ADD FIELD "codCliente" OF "alugueis" AS integer 
+  FORMAT ">>>>9"
+  INITIAL "0"
+  LABEL "Código"
+  POSITION 7
+  MAX-WIDTH 4
+  COLUMN-LABEL "Código"
+  ORDER 20
+  MANDATORY
 
 ADD INDEX "codAluguel" ON "alugueis" 
   AREA "Schema Area"
@@ -262,4 +262,4 @@ ADD INDEX "codFilme" ON "filmes"
 PSC
 cpstream=ISO8859-1
 .
-0000004877
+0000004879
